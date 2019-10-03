@@ -1,38 +1,50 @@
 import { Component } from '@angular/core';
+import { ITodo } from './interfaces/itodo';
+import { TodoService } from './services/todo.service'
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+     templateUrl: './app.component.html',
+     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'Todos';
-  todoList: any [] = [];
+  todoList: ITodo [] = [];
   todoTitle: string;
+  todoId: number = 1;
+
+  constructor(
+    private TodoService: TodoService) {
+
+  }
 
   ngOnInit() {
     this.todoTitle = '';
-    this.todoList = [
-      // example of how to make an item in todo list
-      { title: 'Install Angular CLI', isDone: false },
-
-    ];
+    this.todoId = 1;
+    this.TodoService.addTodoItem(
+      {id: 0, title: 'Install Angular CLI', isDone: false, isDoing: false, isEditing: false},)
+    this.todoList = this.TodoService.getTodoItems();
   }
 
-   // adds a todo to our list
-   addTodo():void {
-    this.todoList.push({
-      title: this.todoTitle,
-      isDone: false
-    });
+    // utilizes the addTodoItem method in TodoService
+    addTodo():void {
+      this.TodoService.addTodoItem({
+        id: this.todoId,
+        title: this.todoTitle,
+        isDone: false,
+        isDoing: false,
+        isEditing: false
+      });
 
-    // resets our todoTitle variable to an empty string
-    this.todoTitle = '';
-  }
-   // a method to delete an item
+      this.todoTitle = '';
+      this.todoId++;
+    }
+
+  
+  
+   // utilizes the deleteTodoItem method in TodoService
    deleteTodo(todo:any) {
-    const index = this.todoList.findIndex(todoItem => todoItem === todo);
-    this.todoList.splice(index, 1);
+    this.TodoService.deleteTodoItem(todo)
     
   }
 }
